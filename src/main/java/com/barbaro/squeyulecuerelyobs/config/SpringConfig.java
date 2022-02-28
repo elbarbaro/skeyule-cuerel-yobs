@@ -10,9 +10,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 @EnableScheduling
 public class SpringConfig {
 
+    private CurlCommandRaisaTask curlCommandTask;
+
+    public SpringConfig(CurlCommandRaisaTask commandRaisaTask) {
+        this.curlCommandTask = commandRaisaTask;
+    }
+
     @Scheduled(cron = "0 * * * * ?")
     public void scheduleCurlCommandTask() {
-        CurlCommandRaisaTask curlCommandTask = new CurlCommandRaisaTask();
         curlCommandTask.start();
     }
 }

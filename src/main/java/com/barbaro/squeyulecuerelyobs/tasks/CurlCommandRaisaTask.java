@@ -1,29 +1,36 @@
 package com.barbaro.squeyulecuerelyobs.tasks;
 
-import org.springframework.beans.factory.annotation.Value;
+import java.util.List;
 
+import com.barbaro.squeyulecuerelyobs.config.ScheduleProperties;
+
+import org.springframework.stereotype.Component;
+
+@Component
 public class CurlCommandRaisaTask {
 
-    @Value("${schedule.curl.port}")
-    private int port;
+    private ScheduleProperties scheduleProperties;
 
-    @Value("${schedule.curl.initial-port}")
-    private int initialPort;
-
-    @Value("${schedule.curl.end-port}")
-    private int endPort;
+    public CurlCommandRaisaTask(ScheduleProperties scheduleProperties) {
+        this.scheduleProperties = scheduleProperties;
+    }
 
     private static String SERVER_URL_TEMPLATE = "skeyule.rayita.com:%s";
 
     public void start() {
-        runOnyCall(110);
-        runCalls(10001, 23000);
+        int port = scheduleProperties.getPort();
+        int initialPort = scheduleProperties.getInitialPort();
+        int endPort = scheduleProperties.getEndPort();
+        runOnyCall(port);
+        runCalls(initialPort, endPort);
         System.out.println("Execute command successfully");
     }
 
     private void runOnyCall(int port) {
-        String url = String.format(SERVER_URL_TEMPLATE, String.valueOf(port));
-        executeCurlCall(url);
+        List<String> urlList = scheduleProperties.getUrlList();
+        for(String url: urlList) {
+            executeCurlCall(String.format(url + ":%d", port));
+        }
     }
 
     private void runCalls(int initialPort, int endPort) {
